@@ -219,6 +219,7 @@ export default function LLMSettingsPage() {
                 {providers.map(provider => (
                   <button 
                     key={provider.id}
+                    type="button"
                     className={cn(
                       "flex items-center w-full text-left p-2 rounded-md cursor-pointer hover:bg-accent",
                       selectedProvider?.id === provider.id && "bg-accent"
