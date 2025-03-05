@@ -113,3 +113,48 @@ export const suggestion = pgTable(
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
+
+export const provider = pgTable('Provider', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  name: varchar('name', { length: 64 }).notNull(),
+  type: varchar('type', { length: 32 }).notNull(),
+  apiKey: varchar('apiKey', { length: 256 }).notNull(),
+  baseUrl: varchar('baseUrl', { length: 256 }).notNull(),
+  isCustom: boolean('isCustom').default(false),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+});
+
+export type Provider = InferSelectModel<typeof provider>;
+
+export const model = pgTable('Model', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  providerId: uuid('providerId')
+    .notNull()
+    .references(() => provider.id, { onDelete: 'cascade' }),
+  modelId: varchar('modelId', { length: 64 }).notNull(),
+  name: varchar('name', { length: 128 }).notNull(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+});
+
+export type Model = InferSelectModel<typeof model>;
+
+export const assistant = pgTable('Assistant', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  name: varchar('name', { length: 64 }).notNull(),
+  systemPrompt: text('systemPrompt'),
+  modelId: uuid('modelId')
+    .notNull()
+    .references(() => model.id),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+});
+
+export type Assistant = InferSelectModel<typeof assistant>;

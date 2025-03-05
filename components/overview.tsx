@@ -93,17 +93,6 @@ export const Overview = () => {
             </motion.div>
           ))}
         </motion.div>
-        
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="mt-6"
-        >
-          <Button size="lg" className="gap-2">
-            {t('startButton')} <ArrowRight className="size-4" />
-          </Button>
-        </motion.div>
       </div>
     </motion.div>
   );
