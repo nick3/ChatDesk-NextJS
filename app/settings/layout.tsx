@@ -3,15 +3,30 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Separator } from '@radix-ui/react-separator';
 import { Settings, User, Shield, Laptop, Brain, LifeBuoy, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
+import { navigationItemsConfig } from './nav-items';
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
 }
+
+// 图标映射对象
+const IconMap = {
+  User,
+  Shield,
+  Brain,
+  Laptop,
+  LifeBuoy
+};
+
+// 使用配置构建包含 React 组件的导航项
+export const navigationItems = navigationItemsConfig.map(item => ({
+  ...item,
+  icon: React.createElement(IconMap[item.icon as keyof typeof IconMap], { className: "mr-2 h-4 w-4" })
+}));
 
 export default function SettingsLayout({ children }: SettingsLayoutProps) {
   const pathname = usePathname();
@@ -23,34 +38,6 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
     // 返回到主应用页面，而不是上一个设置子页面
     router.push('/');
   };
-  
-  const navigationItems = [
-    { 
-      title: t('profile'), 
-      href: '/settings/profile', 
-      icon: <User className="mr-2 h-4 w-4" /> 
-    },
-    { 
-      title: t('security'), 
-      href: '/settings/security', 
-      icon: <Shield className="mr-2 h-4 w-4" /> 
-    },
-    { 
-      title: t('llm'), 
-      href: '/settings/llm', 
-      icon: <Brain className="mr-2 h-4 w-4" /> 
-    },
-    { 
-      title: t('appearance'), 
-      href: '/settings/appearance', 
-      icon: <Laptop className="mr-2 h-4 w-4" /> 
-    },
-    { 
-      title: t('support'), 
-      href: '/settings/support', 
-      icon: <LifeBuoy className="mr-2 h-4 w-4" /> 
-    },
-  ];
 
   return (
     <div className="container mx-auto py-6 px-4 md:px-6">
@@ -58,12 +45,12 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b">
         {/* 标题区域（左侧） */}
         <div className="flex items-center mb-4 sm:mb-0">
-          <Settings className="mr-2 h-6 w-6" />
+          <Settings className="mr-2 size-6" />
           <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
         </div>
         
         {/* 导航区域（中间） */}
-        <nav className="flex-grow flex justify-center">
+        <nav className="grow flex justify-center">
           <div className="flex flex-wrap justify-center gap-1.5">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href;
@@ -80,7 +67,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
                   )}
                 >
                   {item.icon}
-                  <span>{item.title}</span>
+                  <span>{t(item.title)}</span>
                 </Link>
               );
             })}
@@ -93,10 +80,10 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
             variant="ghost"
             size="icon"
             onClick={handleClose}
-            className="h-9 w-9"
+            className="size-9"
             aria-label={t('close')}
           >
-            <X className="h-5 w-5" />
+            <X className="size-5" />
           </Button>
         </div>
       </div>

@@ -1,7 +1,42 @@
 {
   "settings": {
     "title": "设置",
-    "profile": "个人资料",
+    "profile": {
+      "title": "个人资料",
+      "description": "管理您的个人信息和账户设置",
+      "avatar": "头像",
+      "avatarDescription": "上传您的个人头像",
+      "uploadAvatar": "上传头像",
+      "avatarRequirements": "仅支持 JPG、PNG 格式，文件大小不超过 5MB",
+      "personalInfo": "个人信息",
+      "personalInfoDescription": "更新您的个人资料信息",
+      "name": "昵称",
+      "namePlaceholder": "请输入您的昵称",
+      "nameMinLength": "名称至少包含2个字符",
+      "nameMaxLength": "名称不能超过30个字符",
+      "email": "电子邮箱",
+      "emailCannotChange": "电子邮箱地址无法更改",
+      "saveChanges": "保存修改",
+      "security": "安全设置",
+      "securityDescription": "管理您的密码和账户安全",
+      "changePassword": "修改密码",
+      "changePasswordDesc": "更新您的登录密码，建议使用强密码并定期更换",
+      "currentPassword": "当前密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "passwordMinLength": "密码长度至少为 6 个字符",
+      "passwordMismatch": "两次输入的密码不一致",
+      "cancel": "取消",
+      "updatePassword": "更新密码",
+      "profileUpdated": "个人资料已更新",
+      "profileUpdatedDesc": "您的个人资料信息已成功更新",
+      "passwordUpdated": "密码已更新",
+      "passwordUpdatedDesc": "您的密码已成功更新，下次登录时请使用新密码",
+      "errorTitle": "操作失败",
+      "errorDesc": "处理您的请求时出错，请稍后再试",
+      "featureNotAvailable": "功能暂未开放",
+      "featureNotAvailableDesc": "此功能正在开发中，敬请期待"
+    },
     "security": "账户安全",
     "llm": "模型管理",
     "appearance": "外观",
@@ -120,6 +155,7 @@
     "darkMode": "切换深色模式",
     "lightMode": "切换浅色模式",
     "signOut": "退出登录",
-    "theme": "主题"
+    "theme": "主题",
+    "settings": "设置"
   }
 }

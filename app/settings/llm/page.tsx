@@ -24,7 +24,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from '@/components/ui/card';
 import {
   Tooltip,
@@ -229,7 +228,7 @@ export default function LLMSettingsPage() {
                     <div className="mr-2">
                       <ProviderIcon type={provider.type} />
                     </div>
-                    <span className="flex-grow truncate">{provider.name}</span>
+                    <span className="grow truncate">{provider.name}</span>
                   </button>
                 ))}
               </div>
@@ -239,7 +238,7 @@ export default function LLMSettingsPage() {
                 className="w-full" 
                 onClick={handleAddProvider}
               >
-                <PlusCircle className="mr-2 h-4 w-4" />
+                <PlusCircle className="mr-2 size-4" />
                 {t('addProvider')}
               </Button>
             </CardContent>
@@ -262,7 +261,7 @@ export default function LLMSettingsPage() {
                   size="sm"
                   onClick={() => handleDeleteProvider(selectedProvider.id)}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="size-4" />
                 </Button>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -307,9 +306,9 @@ export default function LLMSettingsPage() {
                         onClick={() => setShowApiKey(!showApiKey)}
                       >
                         {showApiKey ? (
-                          <EyeOff className="h-4 w-4" />
+                          <EyeOff className="size-4" />
                         ) : (
-                          <Eye className="h-4 w-4" />
+                          <Eye className="size-4" />
                         )}
                       </Button>
                     </div>
@@ -329,7 +328,7 @@ export default function LLMSettingsPage() {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="ghost" size="icon">
-                              <AlertCircle className="h-4 w-4" />
+                              <AlertCircle className="size-4" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -357,7 +356,7 @@ export default function LLMSettingsPage() {
                         size="sm"
                         onClick={handleAddModel}
                       >
-                        <PlusCircle className="mr-2 h-4 w-4" />
+                        <PlusCircle className="mr-2 size-4" />
                         {t('addModel')}
                       </Button>
                     </div>
@@ -366,7 +365,7 @@ export default function LLMSettingsPage() {
                       <div className="space-y-4">
                         {selectedProvider.models.map((model, index) => (
                           <div key={model.id || `model-${index}-${Date.now()}`} className="flex items-end gap-2">
-                            <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div className="grow grid grid-cols-1 md:grid-cols-2 gap-2">
                               <div>
                                 <Label htmlFor={`model-name-${index}`}>
                                   {t('modelName')}
@@ -393,7 +392,7 @@ export default function LLMSettingsPage() {
                               size="icon"
                               onClick={() => handleDeleteModel(index)}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="size-4" />
                             </Button>
                           </div>
                         ))}

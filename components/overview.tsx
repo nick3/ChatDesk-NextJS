@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { MessageSquare, Settings, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -28,17 +28,17 @@ export const Overview = () => {
   
   const features = [
     {
-      icon: <MessageSquare className="w-6 h-6 text-primary" />,
+      icon: <MessageSquare className="size-6 text-primary" />,
       title: t('features.chat.title'),
       description: t('features.chat.description')
     },
     {
-      icon: <Settings className="w-6 h-6 text-primary" />,
+      icon: <Settings className="size-6 text-primary" />,
       title: t('features.customize.title'),
       description: t('features.customize.description')
     },
     {
-      icon: <Sparkles className="w-6 h-6 text-primary" />,
+      icon: <Sparkles className="size-6 text-primary" />,
       title: t('features.assistants.title'),
       description: t('features.assistants.description')
     }
@@ -60,7 +60,7 @@ export const Overview = () => {
           transition={{ delay: 0.5, duration: 0.5 }}
           className="flex flex-col gap-6 items-center"
         >
-          <div className="h-20 w-20 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+          <div className="size-20 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
             <MessageIcon size={40} className="text-background" />
           </div>
           
@@ -101,7 +101,7 @@ export const Overview = () => {
           className="mt-6"
         >
           <Button size="lg" className="gap-2">
-            {t('startButton')} <ArrowRight className="w-4 h-4" />
+            {t('startButton')} <ArrowRight className="size-4" />
           </Button>
         </motion.div>
       </div>

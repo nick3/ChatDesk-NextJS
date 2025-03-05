@@ -49,7 +49,7 @@ export default function SupportPage() {
           <CardFooter className="flex justify-end">
             <Button variant="outline" size="sm" asChild>
               <Link href="https://github.com/yourusername/chatdesk" target="_blank" rel="noopener noreferrer">
-                <Github className="mr-2 h-4 w-4" />
+                <Github className="mr-2 size-4" />
                 {t('viewOnGithub')}
               </Link>
             </Button>
@@ -76,25 +76,25 @@ export default function SupportPage() {
                 <div className="flex flex-wrap gap-2">
                   <Button variant="outline" size="sm" className="h-8" asChild>
                     <Link href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer">
-                      <Github className="mr-1 h-4 w-4" />
+                      <Github className="mr-1 size-4" />
                       GitHub
                     </Link>
                   </Button>
                   <Button variant="outline" size="sm" className="h-8" asChild>
                     <Link href="https://twitter.com/yourusername" target="_blank" rel="noopener noreferrer">
-                      <X className="mr-1 h-4 w-4" />
+                      <X className="mr-1 size-4" />
                       X
                     </Link>
                   </Button>
                   <Button variant="outline" size="sm" className="h-8" asChild>
                     <Link href="mailto:your.email@example.com">
-                      <Mail className="mr-1 h-4 w-4" />
+                      <Mail className="mr-1 size-4" />
                       Email
                     </Link>
                   </Button>
                   <Button variant="outline" size="sm" className="h-8" asChild>
                     <Link href="https://yourwebsite.com" target="_blank" rel="noopener noreferrer">
-                      <Globe className="mr-1 h-4 w-4" />
+                      <Globe className="mr-1 size-4" />
                       Website
                     </Link>
                   </Button>
@@ -105,7 +105,7 @@ export default function SupportPage() {
           <CardFooter className="flex justify-end">
             <Button variant="outline" size="sm" asChild>
               <Link href="https://buymeacoffee.com/yourusername" target="_blank" rel="noopener noreferrer">
-                <Coffee className="mr-2 h-4 w-4" />
+                <Coffee className="mr-2 size-4" />
                 {t('supportProject')}
               </Link>
             </Button>
@@ -122,25 +122,25 @@ export default function SupportPage() {
         <CardContent className="grid gap-4 md:grid-cols-2">
           <Button variant="outline" className="justify-start" asChild>
             <Link href="https://github.com/yourusername/chatdesk/issues" target="_blank" rel="noopener noreferrer">
-              <Github className="mr-2 h-4 w-4" />
+              <Github className="mr-2 size-4" />
               {t('reportIssue')}
             </Link>
           </Button>
           <Button variant="outline" className="justify-start" asChild>
             <Link href="https://github.com/yourusername/chatdesk/wiki" target="_blank" rel="noopener noreferrer">
-              <Globe className="mr-2 h-4 w-4" />
+              <Globe className="mr-2 size-4" />
               {t('documentation')}
             </Link>
           </Button>
           <Button variant="outline" className="justify-start" asChild>
             <Link href="https://github.com/yourusername/chatdesk/discussions" target="_blank" rel="noopener noreferrer">
-              <Heart className="mr-2 h-4 w-4" />
+              <Heart className="mr-2 size-4" />
               {t('community')}
             </Link>
           </Button>
           <Button variant="outline" className="justify-start" asChild>
             <Link href="mailto:support@example.com">
-              <Mail className="mr-2 h-4 w-4" />
+              <Mail className="mr-2 size-4" />
               {t('contactSupport')}
             </Link>
           </Button>

@@ -5,6 +5,7 @@ import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 import {
   DropdownMenu,
@@ -22,6 +23,7 @@ import {
 export function SidebarUserNav({ user }: { user: User }) {
   const { setTheme, theme } = useTheme();
   const t = useTranslations('user');
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -49,6 +51,13 @@ export function SidebarUserNav({ user }: { user: User }) {
               onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
               {theme === 'light' ? t('darkMode') : t('lightMode')}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              className="cursor-pointer"
+              onSelect={() => router.push('/settings')}
+            >
+              {t('settings')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
