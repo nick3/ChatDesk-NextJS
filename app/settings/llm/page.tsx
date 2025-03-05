@@ -175,7 +175,7 @@ export default function LLMSettingsPage() {
       ...selectedProvider,
       models: [
         ...(selectedProvider.models || []),
-        { id: '', name: '' }
+        { id: `model-${Date.now()}`, name: '' }
       ]
     };
     
@@ -217,10 +217,10 @@ export default function LLMSettingsPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 {providers.map(provider => (
-                  <div 
+                  <button 
                     key={provider.id}
                     className={cn(
-                      "flex items-center p-2 rounded-md cursor-pointer hover:bg-accent",
+                      "flex items-center w-full text-left p-2 rounded-md cursor-pointer hover:bg-accent",
                       selectedProvider?.id === provider.id && "bg-accent"
                     )}
                     onClick={() => setSelectedProvider(provider)}
@@ -229,7 +229,7 @@ export default function LLMSettingsPage() {
                       <ProviderIcon type={provider.type} />
                     </div>
                     <span className="flex-grow truncate">{provider.name}</span>
-                  </div>
+                  </button>
                 ))}
               </div>
               
@@ -364,7 +364,7 @@ export default function LLMSettingsPage() {
                     {selectedProvider.models && selectedProvider.models.length > 0 ? (
                       <div className="space-y-4">
                         {selectedProvider.models.map((model, index) => (
-                          <div key={index} className="flex items-end gap-2">
+                          <div key={model.id || `model-${index}-${Date.now()}`} className="flex items-end gap-2">
                             <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-2">
                               <div>
                                 <Label htmlFor={`model-name-${index}`}>
