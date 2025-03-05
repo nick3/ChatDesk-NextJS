@@ -20,6 +20,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import { useLocalStorage, useWindowSize } from 'usehooks-ts';
+import { useTranslations } from 'next-intl';
 
 import { sanitizeUIMessages } from '@/lib/utils';
 
@@ -27,7 +28,6 @@ import { ArrowUpIcon, PaperclipIcon, StopIcon } from './icons';
 import { PreviewAttachment } from './preview-attachment';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
-import { SuggestedActions } from './suggested-actions';
 import equal from 'fast-deep-equal';
 
 function PureMultimodalInput({
@@ -67,6 +67,7 @@ function PureMultimodalInput({
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
+  const t = useTranslations('chat');
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -163,7 +164,7 @@ function PureMultimodalInput({
       const { error } = await response.json();
       toast.error(error);
     } catch (error) {
-      toast.error('Failed to upload file, please try again!');
+      toast.error(t('uploadFailed'));
     }
   };
 
@@ -195,12 +196,6 @@ function PureMultimodalInput({
 
   return (
     <div className="relative w-full flex flex-col gap-4">
-      {messages.length === 0 &&
-        attachments.length === 0 &&
-        uploadQueue.length === 0 && (
-          <SuggestedActions append={append} chatId={chatId} />
-        )}
-
       <input
         type="file"
         className="fixed -top-4 -left-4 size-0.5 opacity-0 pointer-events-none"
@@ -232,7 +227,7 @@ function PureMultimodalInput({
 
       <Textarea
         ref={textareaRef}
-        placeholder="Send a message..."
+        placeholder={t('sendMessage')}
         value={input}
         onChange={handleInput}
         className={cx(
@@ -246,7 +241,7 @@ function PureMultimodalInput({
             event.preventDefault();
 
             if (isLoading) {
-              toast.error('Please wait for the model to finish its response!');
+              toast.error(t('waitForResponse'));
             } else {
               submitForm();
             }
@@ -291,6 +286,8 @@ function PureAttachmentsButton({
   fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
   isLoading: boolean;
 }) {
+  const t = useTranslations('chat');
+  
   return (
     <Button
       className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
@@ -300,6 +297,8 @@ function PureAttachmentsButton({
       }}
       disabled={isLoading}
       variant="ghost"
+      aria-label={t('attachFiles')}
+      title={t('attachFiles')}
     >
       <PaperclipIcon size={14} />
     </Button>
@@ -315,6 +314,8 @@ function PureStopButton({
   stop: () => void;
   setMessages: Dispatch<SetStateAction<Array<Message>>>;
 }) {
+  const t = useTranslations('chat');
+  
   return (
     <Button
       className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
@@ -323,6 +324,8 @@ function PureStopButton({
         stop();
         setMessages((messages) => sanitizeUIMessages(messages));
       }}
+      aria-label={t('stopGeneration')}
+      title={t('stopGeneration')}
     >
       <StopIcon size={14} />
     </Button>
@@ -340,6 +343,8 @@ function PureSendButton({
   input: string;
   uploadQueue: Array<string>;
 }) {
+  const t = useTranslations('chat');
+  
   return (
     <Button
       className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
@@ -348,6 +353,8 @@ function PureSendButton({
         submitForm();
       }}
       disabled={input.length === 0 || uploadQueue.length > 0}
+      aria-label={t('send')}
+      title={t('send')}
     >
       <ArrowUpIcon size={14} />
     </Button>
