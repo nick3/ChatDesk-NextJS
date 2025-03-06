@@ -2,11 +2,9 @@ import {
   type Message,
   createDataStreamResponse,
   smoothStream,
-  streamText,
+  streamText
 } from 'ai';
-
 import { auth } from '@/app/(auth)/auth';
-import { myProvider } from '@/lib/ai/models';
 import { systemPrompt } from '@/lib/ai/prompts';
 import {
   deleteChatById,
@@ -25,6 +23,7 @@ import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { getWeather } from '@/lib/ai/tools/get-weather';
+import { getSelectedLanguageModel } from '@/lib/ai/model-selector';
 
 export const maxDuration = 60;
 
@@ -33,8 +32,11 @@ export async function POST(request: Request) {
     id,
     messages,
     selectedChatModel,
-  }: { id: string; messages: Array<Message>; selectedChatModel: string } =
-    await request.json();
+  }: { 
+    id: string; 
+    messages: Array<Message>; 
+    selectedChatModel: string;
+  } = await request.json();
 
   const session = await auth();
 
@@ -51,7 +53,11 @@ export async function POST(request: Request) {
   const chat = await getChatById({ id });
 
   if (!chat) {
-    const title = await generateTitleFromUserMessage({ message: userMessage });
+    // 将当前选择的模型ID传递给生成标题函数
+    const title = await generateTitleFromUserMessage({ 
+      message: userMessage,
+      selectedModelId: selectedChatModel  // 传入当前选择的模型ID
+    });
     await saveChat({ id, userId: session.user.id, title });
   }
 
@@ -60,9 +66,12 @@ export async function POST(request: Request) {
   });
 
   return createDataStreamResponse({
-    execute: (dataStream) => {
+    execute: async (dataStream) => {
+      // 使用模型选择器获取当前用户选择的模型
+      const { model, isCustomModel, customModelInfo } = await getSelectedLanguageModel();
+
       const result = streamText({
-        model: myProvider.languageModel(selectedChatModel),
+        model,
         system: systemPrompt({ selectedChatModel }),
         messages,
         maxSteps: 5,
@@ -154,7 +163,6 @@ export async function DELETE(request: Request) {
     return new Response('Chat deleted', { status: 200 });
   } catch (error) {
     return new Response('An error occurred while processing your request', {
-      status: 500,
-    });
+      status: 500 });
   }
 }

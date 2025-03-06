@@ -16,18 +16,37 @@ import type { VisibilityType } from './visibility-selector';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
 
+// 添加自定义模型信息类型
+interface CustomModelInfo {
+  provider: {
+    id: string;
+    name: string;
+    type: string;
+    apiKey: string;
+    baseUrl: string;
+  };
+  model: {
+    modelId: string;
+    name: string;
+  };
+}
+
 export function Chat({
   id,
   initialMessages,
   selectedChatModel,
   selectedVisibilityType,
   isReadonly,
+  isCustomModel = false,
+  customModelInfo = null,
 }: {
   id: string;
   initialMessages: Array<Message>;
   selectedChatModel: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  isCustomModel?: boolean;
+  customModelInfo?: CustomModelInfo | null;
 }) {
   const { mutate } = useSWRConfig();
 
@@ -43,7 +62,12 @@ export function Chat({
     reload,
   } = useChat({
     id,
-    body: { id, selectedChatModel: selectedChatModel },
+    body: { 
+      id, 
+      selectedChatModel, 
+      isCustomModel,
+      customModelInfo 
+    },
     initialMessages,
     experimental_throttle: 100,
     sendExtraMessageFields: true,
@@ -72,6 +96,8 @@ export function Chat({
           selectedModelId={selectedChatModel}
           selectedVisibilityType={selectedVisibilityType}
           isReadonly={isReadonly}
+          isCustomModel={isCustomModel}
+          customModelInfo={customModelInfo}
         />
 
         <Messages
