@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -30,10 +30,9 @@ export default function LLMSettingsPage() {
     itemId: null
   });
   
-  // 添加修改状态跟踪
+  // 修改状态跟踪
   const [providerModified, setProviderModified] = useState(false);
   const [modelsModified, setModelsModified] = useState<Record<string, boolean>>({});
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // 初始化加载数据
   useEffect(() => {
@@ -48,15 +47,6 @@ export default function LLMSettingsPage() {
       setModels([]);
     }
   }, [selectedProvider]);
-
-  // 组件卸载时清除定时器
-  useEffect(() => {
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-    };
-  }, []);
 
   // 获取所有提供商
   const fetchProviders = async () => {
@@ -119,15 +109,7 @@ export default function LLMSettingsPage() {
     saveProvider(newProvider);
   };
 
-  // 清除待处理的保存定时器
-  const clearPendingSave = () => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-      saveTimeoutRef.current = null;
-    }
-  };
-
-  // 更新表单值
+  // 修改：取消自动保存，改为手动标记修改
   const handleProviderChange = (field: string, value: any) => {
     if (!selectedProvider) return;
     
@@ -138,33 +120,18 @@ export default function LLMSettingsPage() {
     
     setSelectedProvider(updatedProvider);
     setProviderModified(true);
-    
-    // 如果是选择框，立即保存
-    if (field === 'type') {
-      saveProvider(updatedProvider);
-      return;
-    }
-    
-    // 对于文本输入，使用更长的防抖时间
-    clearPendingSave();
-    saveTimeoutRef.current = setTimeout(() => {
-      saveProvider(updatedProvider);
-    }, 2000);
+    // 移除自动保存逻辑，无论 field 类型如何，都仅标记修改
   };
 
-  // 处理输入框失去焦点时保存
+  // 修改：取消输入框失去焦点自动保存
   const handleProviderInputBlur = () => {
-    if (!selectedProvider || !providerModified) return;
-    
-    clearPendingSave();
-    saveProvider(selectedProvider);
+    // ...existing code removed for auto-save...
   };
   
   // 手动保存提供商设置
   const handleSaveProvider = () => {
     if (!selectedProvider || !providerModified) return;
     
-    clearPendingSave();
     saveProvider(selectedProvider);
   };
 
@@ -226,7 +193,7 @@ export default function LLMSettingsPage() {
     }));
   };
 
-  // 更新模型数据
+  // 修改：取消模型的自动保存逻辑
   const handleModelChange = (id: string, field: string, value: string) => {
     const updatedModels = models.map(model => {
       if (model.id === id) {
@@ -236,40 +203,17 @@ export default function LLMSettingsPage() {
     });
     
     setModels(updatedModels);
-    
-    // 标记该模型为已修改
+    // 标记该模型已修改
     setModelsModified(prev => ({
       ...prev,
       [id]: true
     }));
-    
-    // 找到被修改的模型
-    const updatedModel = updatedModels.find(m => m.id === id);
-    
-    if (updatedModel) {
-      // 为每个模型使用单独的防抖定时器
-      clearTimeout(Number(updatedModel.id + '_timer'));
-      const timerId = setTimeout(() => {
-        saveModel(updatedModel, false); // 使用false表示非用户主动触发的保存
-      }, 2000);
-      
-      // 将定时器ID存储在DOM元素上，以便后续清除
-      (window as any)[updatedModel.id + '_timer'] = timerId;
-    }
+    // 移除每个模型的自动防抖保存逻辑
   };
 
-  // 处理模型输入框失去焦点
+  // 修改：取消模型输入框失去焦点时的自动保存
   const handleModelInputBlur = (modelId: string) => {
-    // 清除对应模型的定时器
-    clearTimeout(Number((window as any)[modelId + '_timer']));
-    
-    // 如果模型已修改，立即保存
-    if (modelsModified[modelId]) {
-      const modelToSave = models.find(m => m.id === modelId);
-      if (modelToSave) {
-        saveModel(modelToSave, false); // 使用false表示非用户主动触发的保存
-      }
-    }
+    // ...existing code removed for auto-save...
   };
 
   // 保存模型到服务器
@@ -473,6 +417,18 @@ export default function LLMSettingsPage() {
     }
   };
 
+  // 新增：手动保存函数，依次保存provider和所有已修改的模型
+  const handleManualSave = () => {
+    if (selectedProvider && providerModified) {
+      saveProvider(selectedProvider);
+    }
+    models.forEach(model => {
+      if (modelsModified[model.id]) {
+        saveModel(model, true); // 用户主动保存
+      }
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -484,9 +440,18 @@ export default function LLMSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">{t('title')}</h2>
-        <p className="text-muted-foreground mt-2">{t('description')}</p>
+      {/* 修改：在标题栏右侧添加手动保存按钮 */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">{t('title')}</h2>
+          <p className="text-muted-foreground mt-2">{t('description')}</p>
+        </div>
+        <button 
+          onClick={handleManualSave} 
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+          保存
+        </button>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -517,7 +482,6 @@ export default function LLMSettingsPage() {
               onAddModel={handleAddModel}
               onModelChange={handleModelChange}
               onModelInputBlur={handleModelInputBlur}
-              onSaveModel={(model) => saveModel(model, true)} // 添加true参数表示用户主动触发
               onDeleteModel={confirmDeleteModel}
               onBatchAddModels={handleBatchAddModels}
             />

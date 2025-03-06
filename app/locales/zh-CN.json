@@ -182,7 +182,8 @@
     "waitForResponse": "请等待模型完成回复！",
     "uploadFailed": "文件上传失败，请重试！",
     "stopGeneration": "停止生成",
-    "attachFiles": "添加附件"
+    "attachFiles": "添加附件",
+    "noModelsConfigured": "未配置任何模型，请先在设置中添加模型"
   },
   "history": {
     "more": "更多",

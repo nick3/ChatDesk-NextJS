@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { PlusCircle, Trash2, Loader2, Save } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,7 +13,6 @@ interface ModelListProps {
   onAddModel: () => void;
   onModelChange: (id: string, field: string, value: string) => void;
   onModelInputBlur: (modelId: string) => void;
-  onSaveModel: (model: LLMModel) => void;
   onDeleteModel: (id: string) => void;
   onBatchAddModels?: () => void;
   providerType?: string;
@@ -26,7 +25,6 @@ export function ModelList({
   onAddModel,
   onModelChange,
   onModelInputBlur,
-  onSaveModel,
   onDeleteModel,
   onBatchAddModels,
   providerType,
@@ -93,17 +91,6 @@ export function ModelList({
                 </div>
               </div>
               <div className="flex space-x-1">
-                {modelsModified[model.id] && (
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => onSaveModel(model)}
-                    disabled={saving}
-                    title={t('save')}
-                  >
-                    <Save className="size-4" />
-                  </Button>
-                )}
                 <Button
                   variant="ghost"
                   size="icon"

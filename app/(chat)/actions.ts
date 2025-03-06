@@ -9,7 +9,6 @@ import {
   updateChatVisiblityById,
 } from '@/lib/db/queries';
 import type { VisibilityType } from '@/components/visibility-selector';
-import { myProvider } from '@/lib/ai/models';
 import { getSelectedLanguageModel } from '@/lib/ai/model-selector';
 
 // 更新模型保存函数，支持保存自定义模型信息

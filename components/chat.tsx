@@ -9,7 +9,7 @@ import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
 import { fetcher, generateUUID } from '@/lib/utils';
 
-import { Artifact } from './artifact';
+// import { Artifact } from './artifact';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
 import type { VisibilityType } from './visibility-selector';
@@ -130,7 +130,7 @@ export function Chat({
         </form>
       </div>
 
-      <Artifact
+      {/* <Artifact
         chatId={id}
         input={input}
         setInput={setInput}
@@ -145,7 +145,7 @@ export function Chat({
         reload={reload}
         votes={votes}
         isReadonly={isReadonly}
-      />
+      /> */}
     </>
   );
 }

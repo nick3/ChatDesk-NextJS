@@ -1,8 +1,6 @@
 'use client';
-
 import { startTransition, useEffect, useMemo, useOptimistic, useState } from 'react';
 import { useTranslations } from 'next-intl';
-
 import { saveChatModelAsCookie } from '@/app/(chat)/actions';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,9 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { chatModels } from '@/lib/ai/models';
 import { cn } from '@/lib/utils';
-
 import { CheckCircleFillIcon, ChevronDownIcon, LoaderIcon } from './icons';
 
 // 定义用户自定义模型的类型
@@ -31,7 +27,7 @@ interface UserModel {
   };
 }
 
-// 修改模型选择器组件，支持显示内置模型和用户自定义模型
+// 修改模型选择器组件，支持显示用户自定义模型
 export function ModelSelector({
   selectedModelId,
   className,
@@ -47,21 +43,17 @@ export function ModelSelector({
   const [userModels, setUserModels] = useState<UserModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // 找到选中的模型（可能是内置模型或用户模型）
+  
+  // 找到选中的模型
   const selectedModel = useMemo(() => {
-    // 先从内置模型中查找
-    const builtInModel = chatModels.find((model) => model.id === optimisticModelId);
-    if (builtInModel) return { name: builtInModel.name, isBuiltIn: true };
-    
-    // 再从用户模型中查找
+    // 从用户模型中查找
     const userModel = userModels.find((model) => model.id === optimisticModelId);
-    if (userModel) return { name: `${userModel.name} (${userModel.provider.name})`, isBuiltIn: false };
+    if (userModel) return { name: `${userModel.name} (${userModel.provider.name})` };
     
-    // 如果都没找到，返回默认显示
-    return { name: t('selectModel'), isBuiltIn: true };
+    // 如果没找到，返回默认显示
+    return { name: t('selectModel') };
   }, [optimisticModelId, userModels, t]);
-
+  
   // 获取用户自定义模型
   useEffect(() => {
     const fetchUserModels = async () => {
@@ -76,16 +68,50 @@ export function ModelSelector({
         
         const data = await response.json();
         setUserModels(data.models || []);
+        
+        // 如果有模型但当前没有选中任何模型，自动选择第一个模型
+        if ((data.models || []).length > 0 && !optimisticModelId) {
+          const firstModel = data.models[0];
+          startTransition(() => {
+            setOptimisticModelId(firstModel.id);
+            saveChatModelAsCookie({ 
+              modelId: firstModel.id, 
+              isCustom: true,
+              providerInfo: firstModel.provider,
+              modelInfo: {
+                modelId: firstModel.modelId,
+                name: firstModel.name
+              }
+            });
+          });
+        }
       } catch (error) {
         console.error('Failed to fetch user models:', error);
-        setError('Failed to load custom models');
+        setError('Failed to load models');
       } finally {
         setLoading(false);
       }
     };
     
     fetchUserModels();
-  }, []);
+  }, [optimisticModelId]);
+
+  // 保存用户配置模型列表到cookie
+  useEffect(() => {
+    if (userModels.length > 0) {
+      // 将用户配置的模型信息转换为CustomModelInfo格式
+      const customModelsInfo = userModels.map(model => ({
+        provider: model.provider,
+        model: {
+          modelId: model.modelId,
+          name: model.name
+        }
+      }));
+      
+      // 保存到cookie中
+      document.cookie = `user-configured-models=${JSON.stringify(customModelsInfo)}; path=/; max-age=${60 * 60 * 24 * 365}`; // 1年有效期
+    }
+  }, [userModels]);
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -102,19 +128,7 @@ export function ModelSelector({
           <ChevronDownIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-[300px]">        
-        {/* 分隔线和用户自定义模型 */}
-        {userModels.length > 0 && <DropdownMenuSeparator />}
-        
-        {userModels.length > 0 && (
-          <DropdownMenuItem
-            className="px-3 py-2 text-sm font-medium text-muted-foreground"
-            disabled
-          >
-            {t('customModels')}
-          </DropdownMenuItem>
-        )}
-        
+      <DropdownMenuContent align="start" className="min-w-[300px]">
         {loading ? (
           <DropdownMenuItem disabled>
             <LoaderIcon />
@@ -130,7 +144,6 @@ export function ModelSelector({
               key={userModel.id}
               onSelect={() => {
                 setOpen(false);
-
                 startTransition(() => {
                   setOptimisticModelId(userModel.id);
                   saveChatModelAsCookie({ 
@@ -153,7 +166,6 @@ export function ModelSelector({
                   {userModel.provider.name} • {userModel.modelId}
                 </div>
               </div>
-
               <div className="text-foreground dark:text-foreground opacity-0 group-data-[active=true]/item:opacity-100">
                 <CheckCircleFillIcon />
               </div>
@@ -163,7 +175,7 @@ export function ModelSelector({
         
         {!loading && !error && userModels.length === 0 && (
           <DropdownMenuItem disabled>
-            {t('noCustomModels')}
+            {t('noModelsConfigured')}
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

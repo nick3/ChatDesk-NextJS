@@ -1,14 +1,17 @@
-import { myProvider } from '@/lib/ai/models';
+import { getSelectedLanguageModel } from '@/lib/ai/model-selector';
 import { createDocumentHandler } from '@/lib/artifacts/server';
-import { experimental_generateImage } from 'ai';
+import { experimental_generateImage, ImageModel } from 'ai';
 
 export const imageDocumentHandler = createDocumentHandler<'image'>({
   kind: 'image',
   onCreateDocument: async ({ title, dataStream }) => {
     let draftContent = '';
 
+    const selectedModel = await getSelectedLanguageModel();
+    const model = selectedModel as unknown as ImageModel;
+
     const { image } = await experimental_generateImage({
-      model: myProvider.imageModel('small-model'),
+      model,
       prompt: title,
       n: 1,
     });
@@ -25,8 +28,11 @@ export const imageDocumentHandler = createDocumentHandler<'image'>({
   onUpdateDocument: async ({ description, dataStream }) => {
     let draftContent = '';
 
+    const selectedModel = await getSelectedLanguageModel();
+    const model = selectedModel as unknown as ImageModel;
+
     const { image } = await experimental_generateImage({
-      model: myProvider.imageModel('small-model'),
+      model,
       prompt: description,
       n: 1,
     });

@@ -44,7 +44,6 @@ interface ProviderFormProps {
   onAddModel: () => void;
   onModelChange: (id: string, field: string, value: string) => void;
   onModelInputBlur: (modelId: string) => void;
-  onSaveModel: (model: LLMModel) => void;
   onDeleteModel: (id: string) => void;
   onBatchAddModels: () => void;
 }
@@ -62,7 +61,6 @@ export function ProviderForm({
   onAddModel,
   onModelChange,
   onModelInputBlur,
-  onSaveModel,
   onDeleteModel,
   onBatchAddModels
 }: ProviderFormProps) {
@@ -198,7 +196,6 @@ export function ProviderForm({
           onAddModel={onAddModel}
           onModelChange={onModelChange}
           onModelInputBlur={onModelInputBlur}
-          onSaveModel={onSaveModel}
           onDeleteModel={onDeleteModel}
           onBatchAddModels={onBatchAddModels}
           providerType={provider.type}

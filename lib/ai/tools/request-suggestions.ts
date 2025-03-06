@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import type { Session } from 'next-auth';
-import { type DataStreamWriter, streamObject, tool } from 'ai';
+import { type DataStreamWriter, LanguageModel, streamObject, tool } from 'ai';
 import { getDocumentById, saveSuggestions } from '@/lib/db/queries';
 import type { Suggestion } from '@/lib/db/schema';
 import { generateUUID } from '@/lib/utils';
-import { myProvider } from '../models';
+import { getSelectedLanguageModel } from '@/lib/ai/model-selector';
 
 interface RequestSuggestionsProps {
   session: Session;
@@ -35,8 +35,11 @@ export const requestSuggestions = ({
         Omit<Suggestion, 'userId' | 'createdAt' | 'documentCreatedAt'>
       > = [];
 
+      const selectedModel = await getSelectedLanguageModel();
+      const model = selectedModel as unknown as LanguageModel; // 类型转换
+
       const { elementStream } = streamObject({
-        model: myProvider.languageModel('artifact-model'),
+        model,
         system:
           'You are a help writing assistant. Given a piece of writing, please offer suggestions to improve the piece of writing and describe the change. It is very important for the edits to contain full sentences instead of just words. Max 5 suggestions.',
         prompt: document.content,
