@@ -5,7 +5,7 @@ import { PlusCircle, Trash2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { LLMModel } from './types';
+import type { LLMModel } from './types';
 
 interface ModelListProps {
   models: LLMModel[];

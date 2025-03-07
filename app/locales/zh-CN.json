@@ -272,5 +272,14 @@
     "newAssistant": "新助手",
     "noModelsAvailable": "没有可用的模型，请先在模型设置中添加模型",
     "unknownModel": "未知模型"
+  },
+  "reasoning": {
+    "reasoning": "正在思考",
+    "reasoned": "思考过程",
+    "reasonedFor": "思考用时 {time}",
+    "secondsCount": "{count} 秒",
+    "minutesAndSeconds": "{minutes} 分 {seconds} 秒",
+    "expandReasoning": "展开思考过程",
+    "collapseReasoning": "收起思考过程"
   }
 }

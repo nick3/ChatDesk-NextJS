@@ -2,11 +2,8 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import {
+import type {
   LanguageModel,
-  customProvider,
-  extractReasoningMiddleware,
-  wrapLanguageModel,
   // ImageGenerationModel,
 } from 'ai';
 
@@ -37,24 +34,27 @@ export function createCustomLanguageModel(modelInfo: CustomModelInfo): LanguageM
   const { provider, model } = modelInfo;
   
   switch (provider.type) {
-    case 'openai':
+    case 'openai': {
       const openai = createOpenAI({
         apiKey: provider.apiKey,
         baseURL: provider.baseUrl || undefined
       });
       return openai(model.modelId);
-    case 'anthropic':
+    }
+    case 'anthropic': {
       const anthropic = createAnthropic({
         apiKey: provider.apiKey,
         baseURL: provider.baseUrl || undefined
       });
       return anthropic(model.modelId) as LanguageModel;
-    case 'mistral':
+    }
+    case 'mistral': {
       const mistral = createMistral({
         apiKey: provider.apiKey,
         baseURL: provider.baseUrl || undefined
       });
       return mistral(model.modelId) as LanguageModel;
+    }
     // case 'reasoning':
     //   // 创建一个带有推理能力的模型
     //   const baseProvider = createOpenAICompatible({
@@ -66,7 +66,7 @@ export function createCustomLanguageModel(modelInfo: CustomModelInfo): LanguageM
     //     model: baseProvider(model.modelId),
     //     middleware: extractReasoningMiddleware({ tagName: 'think' }),
     //   });
-    default:
+    default: {
       // 默认使用OpenAI兼容接口
       const customProvider = createOpenAICompatible({
         name: provider.name,
@@ -74,6 +74,7 @@ export function createCustomLanguageModel(modelInfo: CustomModelInfo): LanguageM
         baseURL: provider.baseUrl
       });
       return customProvider(model.modelId) as LanguageModel;
+    }
   }
 }
 

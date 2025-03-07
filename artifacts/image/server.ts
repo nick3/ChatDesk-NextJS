@@ -1,6 +1,6 @@
 import { getSelectedLanguageModel } from '@/lib/ai/model-selector';
 import { createDocumentHandler } from '@/lib/artifacts/server';
-import { experimental_generateImage, ImageModel } from 'ai';
+import { experimental_generateImage, type ImageModel } from 'ai';
 
 export const imageDocumentHandler = createDocumentHandler<'image'>({
   kind: 'image',

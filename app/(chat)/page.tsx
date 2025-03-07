@@ -3,7 +3,6 @@ import { Chat } from '@/components/chat';
 import { DEFAULT_MODEL_ID } from '@/lib/ai/models';
 import { generateUUID } from '@/lib/utils';
 import { DataStreamHandler } from '@/components/data-stream-handler';
-import { redirect } from 'next/navigation';
 
 export default async function Page() {
   const id = generateUUID();

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { Session } from 'next-auth';
-import { type DataStreamWriter, LanguageModel, streamObject, tool } from 'ai';
+import { type DataStreamWriter, type LanguageModel, streamObject, tool } from 'ai';
 import { getDocumentById, saveSuggestions } from '@/lib/db/queries';
 import type { Suggestion } from '@/lib/db/schema';
 import { generateUUID } from '@/lib/utils';

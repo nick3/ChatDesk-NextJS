@@ -27,9 +27,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { PROVIDER_TYPES } from '@/components/ui/provider-icon';
-import { LLMProvider } from './types';
+import type { LLMProvider , LLMModel } from './types';
 import { ModelList } from './model-list';
-import { LLMModel } from './types';
 
 interface ProviderFormProps {
   provider: LLMProvider;

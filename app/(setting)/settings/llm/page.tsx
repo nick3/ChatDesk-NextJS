@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { generateUUID } from '@/lib/utils';
 
 // 导入拆分的组件
-import { LLMProvider, LLMModel, DeleteDialogState } from './types';
+import type { LLMProvider, LLMModel, DeleteDialogState } from './types';
 import { ProviderList } from './provider-list';
 import { ProviderForm } from './provider-form';
 import { DeleteDialog } from './delete-dialog';
@@ -217,7 +217,7 @@ export default function LLMSettingsPage() {
   };
 
   // 保存模型到服务器
-  const saveModel = async (modelData: LLMModel, isUserAction: boolean = false) => {
+  const saveModel = async (modelData: LLMModel, isUserAction = false) => {
     // 验证必填字段 - 仅在用户主动点击保存按钮时执行验证
     if (isUserAction && (!modelData.providerId || !modelData.modelId || !modelData.name)) {
       toast.error(t('modelFieldsRequired'));
@@ -432,7 +432,7 @@ export default function LLMSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+        <Loader2 className="mr-2 size-8 animate-spin" />
         <p>{t('loading')}</p>
       </div>
     );
@@ -446,7 +446,8 @@ export default function LLMSettingsPage() {
           <h2 className="text-2xl font-bold tracking-tight">{t('title')}</h2>
           <p className="text-muted-foreground mt-2">{t('description')}</p>
         </div>
-        <button 
+        <button
+          type="button"
           onClick={handleManualSave} 
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >

@@ -1,4 +1,4 @@
-import { LanguageModel, smoothStream, streamText } from 'ai';
+import { type LanguageModel, smoothStream, streamText } from 'ai';
 import { getSelectedLanguageModel } from '@/lib/ai/model-selector';
 import { createDocumentHandler } from '@/lib/artifacts/server';
 import { updateDocumentPrompt } from '@/lib/ai/prompts';

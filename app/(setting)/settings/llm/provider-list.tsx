@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProviderIcon } from '@/components/ui/provider-icon';
 import { cn } from '@/lib/utils';
-import { LLMProvider } from './types';
+import type { LLMProvider } from './types';
 
 interface ProviderListProps {
   providers: LLMProvider[];

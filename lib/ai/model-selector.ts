@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
-import { LanguageModel } from 'ai';
-import { DEFAULT_MODEL_ID, createCustomLanguageModel, CustomModelInfo } from './models';
+import type { LanguageModel } from 'ai';
+import { DEFAULT_MODEL_ID, createCustomLanguageModel, type CustomModelInfo } from './models';
 
 // 返回给调用者使用的模型选择结果
 export interface ModelSelectionResult {

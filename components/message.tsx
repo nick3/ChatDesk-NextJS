@@ -32,6 +32,7 @@ const PurePreviewMessage = ({
   setMessages,
   reload,
   isReadonly,
+  reasoningStartTime,
 }: {
   chatId: string;
   message: Message;
@@ -44,6 +45,7 @@ const PurePreviewMessage = ({
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>;
   isReadonly: boolean;
+  reasoningStartTime?: number; // 新增属性：记录推理开始时间
 }) => {
   const [mode, setMode] = useState<'view' | 'edit'>('view');
 
@@ -88,6 +90,7 @@ const PurePreviewMessage = ({
               <MessageReasoning
                 isLoading={isLoading}
                 reasoning={message.reasoning}
+                reasoningStartTime={reasoningStartTime}
               />
             )}
 
@@ -231,6 +234,7 @@ export const PreviewMessage = memo(
     )
       return false;
     if (!equal(prevProps.vote, nextProps.vote)) return false;
+    if (prevProps.reasoningStartTime !== nextProps.reasoningStartTime) return false;
 
     return true;
   },

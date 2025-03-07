@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { DeleteDialogState } from './types';
+import type { DeleteDialogState } from './types';
 
 interface DeleteDialogProps {
   state: DeleteDialogState;

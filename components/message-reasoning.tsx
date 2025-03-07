@@ -1,20 +1,60 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDownIcon, LoaderIcon } from './icons';
 import { motion, AnimatePresence } from 'motion/react';
 import { Markdown } from './markdown';
+import { useTranslations } from 'next-intl';
 
 interface MessageReasoningProps {
   isLoading: boolean;
   reasoning: string;
+  reasoningStartTime?: number; // New prop for tracking when reasoning started
 }
 
 export function MessageReasoning({
   isLoading,
   reasoning,
+  reasoningStartTime,
 }: MessageReasoningProps) {
+  const t = useTranslations('reasoning');
   const [isExpanded, setIsExpanded] = useState(true);
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  // Timer for tracking reasoning duration
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | undefined;
+    
+    if (isLoading && reasoningStartTime) {
+      // When loading, update elapsed time every second
+      intervalId = setInterval(() => {
+        const timeNow = Date.now();
+        const elapsed = Math.floor((timeNow - reasoningStartTime) / 1000);
+        setElapsedTime(elapsed);
+      }, 1000);
+    } else if (!isLoading && reasoningStartTime) {
+      // When loading completes, calculate final elapsed time
+      const finalElapsed = Math.floor((Date.now() - reasoningStartTime) / 1000);
+      setElapsedTime(finalElapsed);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isLoading, reasoningStartTime]);
+
+  // Format elapsed time as "X seconds" or "X minutes Y seconds"
+  const formatElapsedTime = () => {
+    if (elapsedTime < 60) {
+      return t('secondsCount', { count: elapsedTime });
+    } else {
+      const minutes = Math.floor(elapsedTime / 60);
+      const seconds = elapsedTime % 60;
+      return t('minutesAndSeconds', { minutes, seconds });
+    }
+  };
 
   const variants = {
     collapsed: {
@@ -35,21 +75,30 @@ export function MessageReasoning({
     <div className="flex flex-col">
       {isLoading ? (
         <div className="flex flex-row gap-2 items-center">
-          <div className="font-medium">Reasoning</div>
+          <div className="font-medium">{t('reasoning')}</div>
           <div className="animate-spin">
             <LoaderIcon />
           </div>
+          {reasoningStartTime && (
+            <div className="text-zinc-500 text-sm">
+              {formatElapsedTime()}
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex flex-row gap-2 items-center">
-          <div className="font-medium">Reasoned for a few seconds</div>
+          <div className="font-medium">
+            {reasoningStartTime 
+              ? t('reasonedFor', { time: formatElapsedTime() })
+              : t('reasoned')}
+          </div>
           <button
             type="button"
             className="cursor-pointer p-0 bg-transparent border-0 flex items-center"
             onClick={() => {
               setIsExpanded(!isExpanded);
             }}
-            aria-label={isExpanded ? "收起推理过程" : "展开推理过程"}
+            aria-label={isExpanded ? t('collapseReasoning') : t('expandReasoning')}
           >
             <ChevronDownIcon />
           </button>

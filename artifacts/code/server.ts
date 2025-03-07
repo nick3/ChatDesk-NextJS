@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LanguageModel, streamObject } from 'ai';
+import { type LanguageModel, streamObject } from 'ai';
 import { getSelectedLanguageModel } from '@/lib/ai/model-selector';
 import { codePrompt, updateDocumentPrompt } from '@/lib/ai/prompts';
 import { createDocumentHandler } from '@/lib/artifacts/server';

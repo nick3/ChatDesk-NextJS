@@ -1,7 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { motion } from 'motion/react';
-import { MessageSquare, Settings, Sparkles, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { MessageSquare, Settings, Sparkles, } from 'lucide-react';
 
 // 创建一个自定义的 MessageIcon 组件，可以接受 className 属性
 const MessageIcon = ({ size = 24, className = '' }) => {

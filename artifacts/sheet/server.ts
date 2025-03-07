@@ -1,7 +1,7 @@
 import { getSelectedLanguageModel } from '@/lib/ai/model-selector';
 import { sheetPrompt, updateDocumentPrompt } from '@/lib/ai/prompts';
 import { createDocumentHandler } from '@/lib/artifacts/server';
-import { LanguageModel, streamObject } from 'ai';
+import { type LanguageModel, streamObject } from 'ai';
 import { z } from 'zod';
 
 export const sheetDocumentHandler = createDocumentHandler<'sheet'>({
