@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       return Response.json({ error: '名称和类型为必填项' }, { status: 400 });
     }
 
-    await createProvider({ 
+    const result = await createProvider({ 
       name, 
       type, 
       apiKey: apiKey || '', 
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       userId: session.user.id 
     });
 
-    return Response.json({ success: true }, { status: 201 });
+    return Response.json({ success: true, provider: result[0] }, { status: 201 });
   } catch (error) {
     console.error('Failed to create provider:', error);
     return Response.json({ error: '创建服务提供商失败' }, { status: 500 });

@@ -403,7 +403,7 @@ export async function createProvider({
       userId,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    }).returning();
   } catch (error) {
     console.error('Failed to create provider in database', error);
     throw error;

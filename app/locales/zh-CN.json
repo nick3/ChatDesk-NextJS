@@ -78,6 +78,7 @@
     "addProvider": "添加服务商",
     "newProvider": "新服务商",
     "deleteProvider": "删除服务商",
+    "providerRemoved": "服务商已移除",
     "configureProvider": "配置 {name} 服务",
     "providerName": "服务商名称",
     "providerType": "服务商类型",
@@ -120,7 +121,8 @@
     "importOpenAIModels": "导入常用模型",
     "modelsBatchAdded": "成功批量添加模型",
     "batchAddError": "批量添加模型失败",
-    "modelFieldsRequired": "提供商ID、模型ID和名称为必填项"
+    "modelFieldsRequired": "提供商ID、模型ID和名称为必填项",
+    "providerFieldsRequired": "名称和类型为必填项"
   },
   "overview": {
     "welcome": "欢迎使用 ChatDesk",

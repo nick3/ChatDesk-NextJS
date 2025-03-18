@@ -41,7 +41,7 @@ export default function LLMSettingsPage() {
 
   // 当选择了提供商后，加载其模型
   useEffect(() => {
-    if (selectedProvider) {
+    if (selectedProvider && selectedProvider.id !== 'new') {
       fetchModels(selectedProvider.id);
     } else {
       setModels([]);
@@ -93,7 +93,7 @@ export default function LLMSettingsPage() {
   // 处理添加新的服务商
   const handleAddProvider = () => {
     const newProvider: LLMProvider = {
-      id: generateUUID(),
+      id: 'new',
       name: t('newProvider'),
       type: 'custom',
       apiKey: '',
@@ -101,12 +101,16 @@ export default function LLMSettingsPage() {
       isCustom: true
     };
     
+    // 只在前端添加服务商，不立即保存到服务器
     setProviders([...providers, newProvider]);
     setSelectedProvider(newProvider);
     setModels([]);
     
-    // 保存到服务器
-    saveProvider(newProvider);
+    // 标记为已修改，等待用户点击保存按钮
+    setProviderModified(true);
+    
+    // 移除原先的自动保存逻辑
+    // saveProvider(newProvider);
   };
 
   // 修改：取消自动保存，改为手动标记修改
@@ -120,7 +124,6 @@ export default function LLMSettingsPage() {
     
     setSelectedProvider(updatedProvider);
     setProviderModified(true);
-    // 移除自动保存逻辑，无论 field 类型如何，都仅标记修改
   };
 
   // 修改：取消输入框失去焦点自动保存
@@ -132,7 +135,28 @@ export default function LLMSettingsPage() {
   const handleSaveProvider = () => {
     if (!selectedProvider || !providerModified) return;
     
+    // 验证必填字段
+    if (!selectedProvider.name || !selectedProvider.type) {
+      toast.error(t('providerFieldsRequired'));
+      return;
+    }
+    
+    // 发送到服务器保存
     saveProvider(selectedProvider);
+    models.forEach(model => {
+      if (modelsModified[model.id]) {
+        saveModel(model, true);
+      }
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="mr-2 size-8 animate-spin" />
+        <p>{t('loading')}</p>
+      </div>
+    );
   };
 
   // 保存提供商到服务器
@@ -140,7 +164,7 @@ export default function LLMSettingsPage() {
     setSaving(true);
     
     // 检查是新建还是更新
-    const isNew = !providers.some(p => p.id === providerData.id && !p.isCustom);
+    const isNew = providerData.id === 'new' || !providers.some(p => p.id === providerData.id);
     
     try {
       const response = await fetch('/api/provider', {
@@ -155,13 +179,25 @@ export default function LLMSettingsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      // 如果是新建，不需要更新providers，因为已经在UI中添加了
-      if (!isNew) {
+      // 更新providers列表，将临时ID替换为服务器返回的ID（如果有）
+      if (isNew) {
+        const data = await response.json();
+        console.log('新服务商创建成功:', data, providerData);
+        if (data.provider && data.provider.id !== providerData.id) {
+          // 如果服务器返回了新ID，更新本地状态
+          const updatedProvider = { ...data.provider };
+          setProviders(providers.map(p => 
+            p.id === providerData.id ? updatedProvider : p
+          ));
+          setSelectedProvider(updatedProvider);
+        }
+      } else {
         setProviders(providers.map(p => 
           p.id === providerData.id ? providerData : p
         ));
       }
       
+      // 重置修改状态
       setProviderModified(false);
       toast.success(t('settingsSaved'));
     } catch (error) {
@@ -177,7 +213,7 @@ export default function LLMSettingsPage() {
     if (!selectedProvider) return;
     
     const newModel: LLMModel = {
-      id: generateUUID(),
+      id: 'new',
       providerId: selectedProvider.id,
       modelId: '',
       name: t('newModel')
@@ -191,6 +227,8 @@ export default function LLMSettingsPage() {
       ...prev,
       [newModel.id]: true
     }));
+
+    setProviderModified(true);
   };
 
   // 修改：取消模型的自动保存逻辑
@@ -208,7 +246,8 @@ export default function LLMSettingsPage() {
       ...prev,
       [id]: true
     }));
-    // 移除每个模型的自动防抖保存逻辑
+    
+    setProviderModified(true);
   };
 
   // 修改：取消模型输入框失去焦点时的自动保存
@@ -233,7 +272,7 @@ export default function LLMSettingsPage() {
     setSaving(true);
     
     // 检查是新建还是更新
-    const isNew = !models.some(m => m.id === modelData.id && m.providerId !== '');
+    const isNew = modelData.id === 'new';
     
     try {
       console.log(`正在${isNew ? '创建' : '更新'}模型，URL: /api/model`, modelData);
@@ -265,7 +304,7 @@ export default function LLMSettingsPage() {
         [modelData.id]: false
       }));
       
-      toast.success(t('modelSaved'));
+      // toast.success(t('modelSaved'));
     } catch (error) {
       console.error('Failed to save model:', error);
       toast.error(t('saveModelError'));
@@ -276,17 +315,58 @@ export default function LLMSettingsPage() {
 
   // 处理删除服务商确认
   const confirmDeleteProvider = (id: string) => {
-    setDeleteDialogState({
-      open: true,
-      type: 'provider',
-      itemId: id
-    });
+    // 检查是否是新添加但未保存的服务商
+    const provider = providers.find(p => p.id === id);
+    const isNewUnsavedProvider = provider && providerModified && !provider.id.includes('-') && isNaN(Number(provider.id));
+    
+    if (isNewUnsavedProvider) {
+      // 如果是新添加未保存的服务商，直接从界面删除，无需弹窗确认
+      handleDeleteUnsavedProvider(id);
+    } else {
+      // 已保存过的服务商，需要确认
+      setDeleteDialogState({
+        open: true,
+        type: 'provider',
+        itemId: id
+      });
+    }
   };
 
-  // 处理删除服务商
+  // 处理删除未保存的新服务商
+  const handleDeleteUnsavedProvider = (providerId: string) => {
+    // 从列表中移除
+    const updatedProviders = providers.filter(p => p.id !== providerId);
+    setProviders(updatedProviders);
+    
+    // 如果当前选中的是被删除的服务商，则重新选择
+    if (selectedProvider?.id === providerId) {
+      setSelectedProvider(updatedProviders.length > 0 ? updatedProviders[0] : null);
+    }
+    
+    // 重置修改状态
+    if (providerModified && selectedProvider?.id === providerId) {
+      setProviderModified(false);
+    }
+    
+    toast.success(t('providerRemoved'));
+  };
+
+  // 处理删除已保存的服务商
   const handleDeleteProvider = async () => {
     const providerId = deleteDialogState.itemId;
+    console.log('删除服务商:', providerId);
     if (!providerId) return;
+    
+    // 检查是否是新添加但未保存的服务商
+    const provider = providers.find(p => p.id === providerId);
+    const isNewUnsavedProvider = provider && providerModified && !provider.id.includes('-') && isNaN(Number(provider.id));
+    
+    if (isNewUnsavedProvider) {
+      // 如果是新添加未保存的服务商，直接从界面删除，无需调用API
+      handleDeleteUnsavedProvider(providerId);
+      setDeleteDialogState({ open: false, type: null, itemId: null });
+      return;
+    }
     
     try {
       setSaving(true);
@@ -417,27 +497,6 @@ export default function LLMSettingsPage() {
     }
   };
 
-  // 新增：手动保存函数，依次保存provider和所有已修改的模型
-  const handleManualSave = () => {
-    if (selectedProvider && providerModified) {
-      saveProvider(selectedProvider);
-    }
-    models.forEach(model => {
-      if (modelsModified[model.id]) {
-        saveModel(model, true); // 用户主动保存
-      }
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="mr-2 size-8 animate-spin" />
-        <p>{t('loading')}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       {/* 修改：在标题栏右侧添加手动保存按钮 */}
@@ -446,13 +505,13 @@ export default function LLMSettingsPage() {
           <h2 className="text-2xl font-bold tracking-tight">{t('title')}</h2>
           <p className="text-muted-foreground mt-2">{t('description')}</p>
         </div>
-        <button
+        {/* <button
           type="button"
           onClick={handleManualSave} 
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
           保存
-        </button>
+        </button> */}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
