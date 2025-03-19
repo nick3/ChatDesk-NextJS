@@ -61,7 +61,7 @@ export default async function Page() {
           selectedVisibilityType="private"
           isReadonly={false}
           isCustomModel={true}
-          customModelInfo={userModels[0]}
+          customModelInfo={userModels.length > 0 ? userModels[0] : null}
         />
         <DataStreamHandler id={id} />
       </>
