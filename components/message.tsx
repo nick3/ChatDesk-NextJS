@@ -2,15 +2,13 @@
 
 import type { ChatRequestOptions, Message } from 'ai';
 import cx from 'classnames';
-import { AnimatePresence, motion } from 'framer-motion';
-import { memo, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { memo, useState } from 'react';
 
 import type { Vote } from '@/lib/db/schema';
 
 import { DocumentToolCall, DocumentToolResult } from './document';
 import {
-  ChevronDownIcon,
-  LoaderIcon,
   PencilEditIcon,
   SparklesIcon,
 } from './icons';
@@ -34,6 +32,7 @@ const PurePreviewMessage = ({
   setMessages,
   reload,
   isReadonly,
+  reasoningStartTime,
 }: {
   chatId: string;
   message: Message;
@@ -46,6 +45,7 @@ const PurePreviewMessage = ({
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>;
   isReadonly: boolean;
+  reasoningStartTime?: number; // 新增属性：记录推理开始时间
 }) => {
   const [mode, setMode] = useState<'view' | 'edit'>('view');
 
@@ -90,6 +90,7 @@ const PurePreviewMessage = ({
               <MessageReasoning
                 isLoading={isLoading}
                 reasoning={message.reasoning}
+                reasoningStartTime={reasoningStartTime}
               />
             )}
 
@@ -233,6 +234,7 @@ export const PreviewMessage = memo(
     )
       return false;
     if (!equal(prevProps.vote, nextProps.vote)) return false;
+    if (prevProps.reasoningStartTime !== nextProps.reasoningStartTime) return false;
 
     return true;
   },

@@ -1,61 +1,149 @@
-<a href="https://chat.vercel.ai/">
-  <img alt="Next.js 14 and App Router-ready AI chatbot." src="app/(chat)/opengraph-image.png">
-  <h1 align="center">Next.js AI Chatbot</h1>
-</a>
-
 <p align="center">
-  An Open-Source AI Chatbot Template Built With Next.js and the AI SDK by Vercel.
+  <img alt="ChatDesk - 现代化AI对话平台" src="app/(chat)/opengraph-image.png">
+  <h1 align="center">ChatDesk</h1>
 </p>
 
 <p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#model-providers"><strong>Model Providers</strong></a> ·
-  <a href="#deploy-your-own"><strong>Deploy Your Own</strong></a> ·
-  <a href="#running-locally"><strong>Running locally</strong></a>
+  基于Next.js和Vercel AI SDK构建的现代化AI对话平台，让你的AI助手体验更加个性化。
+</p>
+
+<p align="center">
+  <a href="#主要功能"><strong>主要功能</strong></a> ·
+  <a href="#技术栈"><strong>技术栈</strong></a> ·
+  <a href="#模型提供商"><strong>模型提供商</strong></a> ·
+  <a href="#部署你自己的版本"><strong>部署指南</strong></a> ·
+  <a href="#本地开发"><strong>本地开发</strong></a>
 </p>
 <br/>
 
-## Features
+## 主要功能
 
-- [Next.js](https://nextjs.org) App Router
-  - Advanced routing for seamless navigation and performance
-  - React Server Components (RSCs) and Server Actions for server-side rendering and increased performance
-- [AI SDK](https://sdk.vercel.ai/docs)
-  - Unified API for generating text, structured objects, and tool calls with LLMs
-  - Hooks for building dynamic chat and generative user interfaces
-  - Supports OpenAI (default), Anthropic, Cohere, and other model providers
-- [shadcn/ui](https://ui.shadcn.com)
-  - Styling with [Tailwind CSS](https://tailwindcss.com)
-  - Component primitives from [Radix UI](https://radix-ui.com) for accessibility and flexibility
-- Data Persistence
-  - [Vercel Postgres powered by Neon](https://vercel.com/storage/postgres) for saving chat history and user data
-  - [Vercel Blob](https://vercel.com/storage/blob) for efficient file storage
-- [NextAuth.js](https://github.com/nextauthjs/next-auth)
-  - Simple and secure authentication
+- **多AI助手管理**
+  - 创建和管理多个AI助手，每个助手都有自己的名称和特色
+  - 为每个AI助手自定义系统提示词，打造专属对话体验
+  - 在界面中快速切换不同的AI助手
 
-## Model Providers
+- **AI服务提供商配置**
+  - 支持配置多种大语言模型服务提供商
+  - 自定义API端点、API密钥和模型参数
+  - 灵活选择不同的模型以满足不同场景需求
 
-This template ships with OpenAI `gpt-4o` as the default. However, with the [AI SDK](https://sdk.vercel.ai/docs), you can switch LLM providers to [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [Cohere](https://cohere.com/), and [many more](https://sdk.vercel.ai/providers/ai-sdk-providers) with just a few lines of code.
+- **对话历史记录**
+  - 自动保存所有与AI助手的对话内容
+  - 轻松回顾和管理历史会话
+  - 支持对话内容的导出和分享
 
-## Deploy Your Own
+- **界面个性化**
+  - 支持亮色/暗色模式切换
+  - 现代化、高质感的UI设计
+  - 动态交互效果提升用户体验
 
-You can deploy your own version of the Next.js AI Chatbot to Vercel with one click:
+- **多语言支持**
+  - 内置多国语言界面
+  - 基于next-intl的完善国际化方案
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fai-chatbot&env=AUTH_SECRET,OPENAI_API_KEY&envDescription=Learn%20more%20about%20how%20to%20get%20the%20API%20Keys%20for%20the%20application&envLink=https%3A%2F%2Fgithub.com%2Fvercel%2Fai-chatbot%2Fblob%2Fmain%2F.env.example&demo-title=AI%20Chatbot&demo-description=An%20Open-Source%20AI%20Chatbot%20Template%20Built%20With%20Next.js%20and%20the%20AI%20SDK%20by%20Vercel.&demo-url=https%3A%2F%2Fchat.vercel.ai&stores=[{%22type%22:%22postgres%22},{%22type%22:%22blob%22}])
+## 技术栈
 
-## Running locally
+- **前端**
+  - [Next.js](https://nextjs.org) App Router
+    - 先进的路由系统，提供无缝导航和优秀性能
+    - React Server Components (RSCs)和Server Actions实现服务端渲染
+  - [TailwindCSS](https://tailwindcss.com)和[RadixUI](https://radix-ui.com)
+    - 现代化的UI组件和样式系统
+    - 可访问性优先的设计原则
+  - [Framer Motion](https://www.framer.com/motion/)
+    - 流畅的动画和交互效果
+    - 提升用户界面体验
 
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js AI Chatbot. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables) for this, but a `.env` file is all that is necessary.
+- **AI集成**
+  - [Vercel AI SDK](https://sdk.vercel.ai/docs)
+    - 统一的API接口，支持文本生成、结构化对象和工具调用
+    - 丰富的React Hooks用于构建动态聊天和生成式用户界面
+    - 支持OpenAI、Anthropic、Mistral、Fireworks等多种模型提供商
 
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control access to your various OpenAI and authentication provider accounts.
+- **数据持久化**
+  - [Drizzle ORM](https://orm.drizzle.team)配合PostgreSQL
+    - 类型安全的数据库查询
+    - 高性能的数据操作
+  - [Vercel Postgres](https://vercel.com/storage/postgres)
+    - 用于存储对话历史和用户配置
+  - [Vercel Blob](https://vercel.com/storage/blob)
+    - 高效的文件存储方案
 
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
+- **认证与安全**
+  - [NextAuth.js](https://github.com/nextauthjs/next-auth)
+    - 简单而安全的认证系统
+    - 支持多种认证提供商
+
+## 模型提供商
+
+ChatDesk支持多种AI模型提供商，包括但不限于：
+
+- [OpenAI](https://openai.com) - GPT-4, GPT-4o, GPT-3.5等
+- [Anthropic](https://anthropic.com) - Claude系列模型
+- [Mistral AI](https://mistral.ai) - Mistral系列模型
+- [Fireworks AI](https://fireworks.ai) - 多种高性能模型
+- 自定义兼容OpenAI API的服务提供商
+
+只需简单配置即可切换不同的模型提供商，满足不同的应用场景和预算需求。
+
+## 部署你自己的版本
+
+你可以使用Vercel一键部署ChatDesk：
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-username%2Fchatdesk&env=AUTH_SECRET,OPENAI_API_KEY&envDescription=查看环境变量配置说明&demo-title=ChatDesk&demo-description=现代化的AI对话平台，支持多AI助手和多种模型提供商&stores=[{%22type%22:%22postgres%22},{%22type%22:%22blob%22}])
+
+## 本地开发
+
+在本地运行ChatDesk，你需要配置环境变量（参考`.env.example`文件）。建议使用[Vercel环境变量](https://vercel.com/docs/projects/environment-variables)进行管理，但简单的`.env`文件也可以满足需求。
+
+> 注意：请不要提交你的`.env`文件，这会泄露你的API密钥和其他敏感信息。
+
+1. 安装Vercel CLI: `pnpm install -g vercel`
+2. 关联本地实例与Vercel和GitHub账号: `vercel link`
+3. 下载环境变量: `vercel env pull`
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Your app template should now be running on [localhost:3000](http://localhost:3000/).
+现在你的应用应该已经在[localhost:3000](http://localhost:3000/)上运行了。
+
+## 数据库操作
+
+ChatDesk使用Drizzle ORM管理数据库，提供了以下命令简化数据库操作：
+
+```bash
+# 生成迁移文件
+pnpm db:generate
+
+# 执行数据库迁移
+pnpm db:migrate
+
+# 启动Drizzle Studio查看和编辑数据
+pnpm db:studio
+
+# 将本地模式推送到数据库
+pnpm db:push
+
+# 从数据库拉取模式
+pnpm db:pull
+
+# 检查模式变更
+pnpm db:check
+```
+
+## 贡献指南
+
+欢迎为ChatDesk贡献代码或提出建议！请遵循以下步骤：
+
+1. Fork本仓库
+2. 创建你的特性分支 (`git checkout -b feature/amazing-feature`)
+3. 提交你的更改 (`git commit -m 'Add some amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 创建一个Pull Request
+
+## 许可证
+
+本项目采用MIT许可证 - 详情请参阅[LICENSE](LICENSE)文件。

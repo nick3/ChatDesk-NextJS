@@ -9,12 +9,27 @@ import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
 import { fetcher, generateUUID } from '@/lib/utils';
 
-import { Artifact } from './artifact';
+// import { Artifact } from './artifact';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
-import { VisibilityType } from './visibility-selector';
+import type { VisibilityType } from './visibility-selector';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
+
+// 添加自定义模型信息类型
+interface CustomModelInfo {
+  provider: {
+    id: string;
+    name: string;
+    type: string;
+    apiKey: string;
+    baseUrl: string;
+  };
+  model: {
+    modelId: string;
+    name: string;
+  };
+}
 
 export function Chat({
   id,
@@ -22,12 +37,16 @@ export function Chat({
   selectedChatModel,
   selectedVisibilityType,
   isReadonly,
+  isCustomModel = false,
+  customModelInfo = null,
 }: {
   id: string;
   initialMessages: Array<Message>;
   selectedChatModel: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  isCustomModel?: boolean;
+  customModelInfo?: CustomModelInfo | null;
 }) {
   const { mutate } = useSWRConfig();
 
@@ -43,7 +62,12 @@ export function Chat({
     reload,
   } = useChat({
     id,
-    body: { id, selectedChatModel: selectedChatModel },
+    body: { 
+      id, 
+      selectedChatModel, 
+      isCustomModel,
+      customModelInfo 
+    },
     initialMessages,
     experimental_throttle: 100,
     sendExtraMessageFields: true,
@@ -72,6 +96,8 @@ export function Chat({
           selectedModelId={selectedChatModel}
           selectedVisibilityType={selectedVisibilityType}
           isReadonly={isReadonly}
+          isCustomModel={isCustomModel}
+          customModelInfo={customModelInfo}
         />
 
         <Messages
@@ -104,7 +130,7 @@ export function Chat({
         </form>
       </div>
 
-      <Artifact
+      {/* <Artifact
         chatId={id}
         input={input}
         setInput={setInput}
@@ -119,7 +145,7 @@ export function Chat({
         reload={reload}
         votes={votes}
         isReadonly={isReadonly}
-      />
+      /> */}
     </>
   );
 }

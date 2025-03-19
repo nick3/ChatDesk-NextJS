@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { streamObject } from 'ai';
-import { myProvider } from '@/lib/ai/models';
+import { type LanguageModel, streamObject } from 'ai';
+import { getSelectedLanguageModel } from '@/lib/ai/model-selector';
 import { codePrompt, updateDocumentPrompt } from '@/lib/ai/prompts';
 import { createDocumentHandler } from '@/lib/artifacts/server';
 
@@ -9,8 +9,11 @@ export const codeDocumentHandler = createDocumentHandler<'code'>({
   onCreateDocument: async ({ title, dataStream }) => {
     let draftContent = '';
 
+    const selectedModel = await getSelectedLanguageModel();
+    const languageModel = selectedModel as unknown as LanguageModel; // 类型转换
+
     const { fullStream } = streamObject({
-      model: myProvider.languageModel('artifact-model'),
+      model: languageModel,
       system: codePrompt,
       prompt: title,
       schema: z.object({
@@ -41,8 +44,11 @@ export const codeDocumentHandler = createDocumentHandler<'code'>({
   onUpdateDocument: async ({ document, description, dataStream }) => {
     let draftContent = '';
 
+    const selectedModel = await getSelectedLanguageModel();
+    const languageModel = selectedModel as unknown as LanguageModel; // 类型转换
+
     const { fullStream } = streamObject({
-      model: myProvider.languageModel('artifact-model'),
+      model: languageModel,
       system: updateDocumentPrompt(document.content, 'code'),
       prompt: description,
       schema: z.object({

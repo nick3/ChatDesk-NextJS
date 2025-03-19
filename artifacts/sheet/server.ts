@@ -1,7 +1,7 @@
-import { myProvider } from '@/lib/ai/models';
+import { getSelectedLanguageModel } from '@/lib/ai/model-selector';
 import { sheetPrompt, updateDocumentPrompt } from '@/lib/ai/prompts';
 import { createDocumentHandler } from '@/lib/artifacts/server';
-import { streamObject } from 'ai';
+import { type LanguageModel, streamObject } from 'ai';
 import { z } from 'zod';
 
 export const sheetDocumentHandler = createDocumentHandler<'sheet'>({
@@ -9,8 +9,11 @@ export const sheetDocumentHandler = createDocumentHandler<'sheet'>({
   onCreateDocument: async ({ title, dataStream }) => {
     let draftContent = '';
 
+    const selectedModel = await getSelectedLanguageModel();
+    const model = selectedModel as unknown as LanguageModel;
+
     const { fullStream } = streamObject({
-      model: myProvider.languageModel('artifact-model'),
+      model,
       system: sheetPrompt,
       prompt: title,
       schema: z.object({
@@ -46,8 +49,11 @@ export const sheetDocumentHandler = createDocumentHandler<'sheet'>({
   onUpdateDocument: async ({ document, description, dataStream }) => {
     let draftContent = '';
 
+    const selectedModel = await getSelectedLanguageModel();
+    const model = selectedModel as unknown as LanguageModel;
+
     const { fullStream } = streamObject({
-      model: myProvider.languageModel('artifact-model'),
+      model,
       system: updateDocumentPrompt(document.content, 'sheet'),
       prompt: description,
       schema: z.object({
