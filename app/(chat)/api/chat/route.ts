@@ -28,10 +28,12 @@ export async function POST(request: Request) {
     id,
     messages,
     selectedChatModel,
+    assistantId,
   }: { 
     id: string; 
     messages: Array<Message>; 
     selectedChatModel: string;
+    assistantId: string;
   } = await request.json();
 
   const session = await auth();
@@ -54,7 +56,7 @@ export async function POST(request: Request) {
       message: userMessage,
       selectedModelId: selectedChatModel  // 传入当前选择的模型ID
     });
-    await saveChat({ id, userId: session.user.id, title });
+    await saveChat({ id, userId: session.user.id, title, assistantId });
   }
 
   await saveMessages({

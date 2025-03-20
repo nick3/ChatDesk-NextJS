@@ -9,6 +9,7 @@ import {
   primaryKey,
   foreignKey,
   boolean,
+  real,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -26,6 +27,8 @@ export const chat = pgTable('Chat', {
   userId: uuid('userId')
     .notNull()
     .references(() => user.id),
+  assistantId: uuid('assistantId')
+    .references(() => assistant.id),
   visibility: varchar('visibility', { enum: ['public', 'private'] })
     .notNull()
     .default('private'),
@@ -147,9 +150,7 @@ export const assistant = pgTable('Assistant', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   name: varchar('name', { length: 64 }).notNull(),
   systemPrompt: text('systemPrompt'),
-  modelId: uuid('modelId')
-    .notNull()
-    .references(() => model.id),
+  temperature: real('temperature').default(0.7),
   userId: uuid('userId')
     .notNull()
     .references(() => user.id),

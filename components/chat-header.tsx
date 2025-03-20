@@ -10,6 +10,7 @@ import { PlusIcon, } from './icons';
 import { useSidebar } from './ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { type VisibilityType, VisibilitySelector } from './visibility-selector';
+import { AssistantSelector } from './assistant-selector';
 
 // 自定义模型信息类型
 interface CustomModelInfo {
@@ -30,6 +31,7 @@ function PureChatHeader({
   chatId,
   selectedModelId,
   selectedVisibilityType,
+  selectedAssistantId,
   isReadonly,
   isCustomModel = false,
   customModelInfo = null,
@@ -37,6 +39,7 @@ function PureChatHeader({
   chatId: string;
   selectedModelId: string;
   selectedVisibilityType: VisibilityType;
+  selectedAssistantId?: string;
   isReadonly: boolean;
   isCustomModel?: boolean;
   customModelInfo?: CustomModelInfo | null;
@@ -79,6 +82,13 @@ function PureChatHeader({
           className="order-1 md:order-3"
         />
       )}
+      {!isReadonly && (
+        <AssistantSelector
+          chatId={chatId}
+          initialAssistantId={selectedAssistantId}
+          className="order-1 md:order-4"
+        />
+      )}
     </header>
   );
 }
@@ -86,6 +96,7 @@ function PureChatHeader({
 export const ChatHeader = memo(PureChatHeader, (prevProps, nextProps) => {
   return (
     prevProps.selectedModelId === nextProps.selectedModelId &&
+    prevProps.selectedAssistantId === nextProps.selectedAssistantId &&
     prevProps.isCustomModel === nextProps.isCustomModel &&
     JSON.stringify(prevProps.customModelInfo) === JSON.stringify(nextProps.customModelInfo)
   );

@@ -54,10 +54,13 @@ export async function saveChat({
   id,
   userId,
   title,
+  assistantId,
+  
 }: {
   id: string;
   userId: string;
   title: string;
+  assistantId: string;
 }) {
   try {
     return await db.insert(chat).values({
@@ -65,9 +68,37 @@ export async function saveChat({
       createdAt: new Date(),
       userId,
       title,
+      assistantId,
     });
   } catch (error) {
     console.error('Failed to save chat in database');
+    throw error;
+  }
+}
+
+export async function updateChat({
+  id,
+  title,
+  assistantId,
+}: {
+  id: string;
+  title?: string;
+  assistantId?: string;
+}) {
+  try {
+    if (title) {
+      return await db
+        .update(chat)
+        .set({ title })
+        .where(eq(chat.id, id));
+    } else if (assistantId) {
+      return await db
+        .update(chat)
+        .set({ assistantId })
+        .where(eq(chat.id, id));
+    }
+  } catch (error) {
+    console.error('Failed to update chat in database');
     throw error;
   }
 }
@@ -542,17 +573,6 @@ export async function updateModel({
 // 删除模型
 export async function deleteModelById({ id }: { id: string }) {
   try {
-    // 检查是否有助手使用此模型
-    const assistantsUsingModel = await db
-      .select({ id: assistant.id })
-      .from(assistant)
-      .where(eq(assistant.modelId, id));
-
-    // 如果有助手使用此模型则抛出错误
-    if (assistantsUsingModel.length > 0) {
-      throw new Error('Cannot delete model that is being used by assistants');
-    }
-
     return await db.delete(model).where(eq(model.id, id));
   } catch (error) {
     console.error('Failed to delete model from database', error);
@@ -630,7 +650,6 @@ export async function createAssistant({
     return await db.insert(assistant).values({
       name,
       systemPrompt,
-      modelId,
       userId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -660,7 +679,6 @@ export async function updateAssistant({
     
     if (name !== undefined) updateData.name = name;
     if (systemPrompt !== undefined) updateData.systemPrompt = systemPrompt;
-    if (modelId !== undefined) updateData.modelId = modelId;
 
     return await db.update(assistant).set(updateData).where(eq(assistant.id, id));
   } catch (error) {
@@ -675,6 +693,22 @@ export async function deleteAssistantById({ id }: { id: string }) {
     return await db.delete(assistant).where(eq(assistant.id, id));
   } catch (error) {
     console.error('Failed to delete assistant from database', error);
+    throw error;
+  }
+}
+
+// 更新聊天使用的助手
+export async function updateChatAssistant({
+  chatId,
+  assistantId,
+}: {
+  chatId: string;
+  assistantId: string;
+}) {
+  try {
+    return await db.update(chat).set({ assistantId }).where(eq(chat.id, chatId));
+  } catch (error) {
+    console.error('Failed to update chat assistant in database', error);
     throw error;
   }
 }
