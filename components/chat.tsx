@@ -15,6 +15,8 @@ import { Messages } from './messages';
 import type { VisibilityType } from './visibility-selector';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
+import { useAtom } from 'jotai';
+import { selectedAssistantIdAtom } from './assistant-selector';
 
 // 添加自定义模型信息类型
 interface CustomModelInfo {
@@ -49,7 +51,7 @@ export function Chat({
   customModelInfo?: CustomModelInfo | null;
 }) {
   const { mutate } = useSWRConfig();
-
+    const [selectedAssistantId] = useAtom(selectedAssistantIdAtom);
   const {
     messages,
     setMessages,
@@ -64,9 +66,10 @@ export function Chat({
     id,
     body: { 
       id, 
-      selectedChatModel, 
-      isCustomModel,
-      customModelInfo 
+      // selectedChatModel, 
+      // isCustomModel,
+      // customModelInfo,
+      assistantId: selectedAssistantId,
     },
     initialMessages,
     experimental_throttle: 100,
@@ -98,6 +101,7 @@ export function Chat({
           isReadonly={isReadonly}
           isCustomModel={isCustomModel}
           customModelInfo={customModelInfo}
+          selectedAssistantId={selectedAssistantId} // 传递assistantId给ChatHeader
         />
 
         <Messages

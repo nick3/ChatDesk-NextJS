@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { atom, useAtom } from "jotai";
 
 import {
   CheckCircleFillIcon,
@@ -26,6 +27,8 @@ export type Assistant = {
   modelId: string;
 };
 
+export const selectedAssistantIdAtom = atom<string | undefined>(undefined);
+
 export function useAssistant({
   chatId,
   initialAssistantId,
@@ -34,7 +37,7 @@ export function useAssistant({
   initialAssistantId?: string;
 }) {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
-  const [selectedAssistantId, setSelectedAssistantId] = useState<string | undefined>(initialAssistantId);
+  const [selectedAssistantId, setSelectedAssistantId] = useAtom(selectedAssistantIdAtom);
   const [isLoading, setIsLoading] = useState(false);
 
   // 获取所有助手列表

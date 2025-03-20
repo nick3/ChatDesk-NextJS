@@ -57,7 +57,7 @@ export async function saveChat({
   assistantId,
   
 }: {
-  id: string;
+  id?: string;
   userId: string;
   title: string;
   assistantId: string;

@@ -53,10 +53,8 @@ export async function saveChatModelAsCookie({
 
 export async function generateTitleFromUserMessage({
   message,
-  selectedModelId,
 }: {
   message: Message;
-  selectedModelId: string;
 }) {
   // 使用模型选择器获取低成本模型用于生成标题
   const { model } = await getSelectedLanguageModel({ useLowCostModel: true });

@@ -69,6 +69,9 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
   }
   
+  // 获取聊天关联的助手ID，从chat记录中获取
+  const assistantId = chat.assistantId || undefined;
+  
   if (!chatModelFromCookie) {
     // 如果没有选择模型，使用第一个用户配置的模型
     const firstModelId = userModels.length > 0 

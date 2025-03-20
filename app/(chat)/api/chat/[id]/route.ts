@@ -4,9 +4,9 @@ import { getChatById, updateChat } from '@/lib/db/queries';
 // 注意：PUT 函数需要接收 params 参数
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = params.id; // 从 URL 路径获取 id
+  const { id } = await params;
   const { title, assistantId }: { title?: string; assistantId?: string } = await request.json();
 
   if (!id || (!title && !assistantId)) {
@@ -21,6 +21,9 @@ export async function PUT(
 
   try {
     const chat = await getChatById({ id });
+    if (!chat) {
+      return new Response('Chat not found', { status: 200 });
+    }
 
     if (chat.userId !== session.user.id) {
       return new Response('Unauthorized', { status: 401 });

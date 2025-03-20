@@ -1,4 +1,5 @@
 import type { ArtifactKind } from '@/components/artifact';
+import { Assistant } from '../db/schema';
 
 export const artifactsPrompt = `
 Artifacts is a special user interface mode that helps users with writing, editing, and other content creation tasks. When artifact is open, it is on the right side of the screen, while the conversation is on the left side. When creating or updating documents, changes are reflected in real-time on the artifacts and visible to the user.
@@ -35,15 +36,21 @@ export const regularPrompt =
   'You are a friendly assistant! Keep your responses concise and helpful.';
 
 export const systemPrompt = ({
-  selectedChatModel,
+  // selectedChatModel,
+  assistant,
 }: {
-  selectedChatModel: string;
+  // selectedChatModel: string;
+  assistant?: Assistant;
 }) => {
-  if (selectedChatModel === 'chat-model-reasoning') {
-    return regularPrompt;
-  } else {
-    return `${regularPrompt}\n\n${artifactsPrompt}`;
-  }
+  // 如果存在助手并且有自定义系统提示词，则使用助手的系统提示词
+  const basePrompt = assistant?.systemPrompt || regularPrompt;
+  return basePrompt;
+  
+  // if (selectedChatModel === 'chat-model-reasoning') {
+  //   return basePrompt;
+  // } else {
+  //   return `${basePrompt}\n\n${artifactsPrompt}`;
+  // }
 };
 
 export const codePrompt = `

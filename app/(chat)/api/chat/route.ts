@@ -11,6 +11,7 @@ import {
   getChatById,
   saveChat,
   saveMessages,
+  getAssistantById,
 } from '@/lib/db/queries';
 import {
   generateUUID,
@@ -27,15 +28,12 @@ export async function POST(request: Request) {
   const {
     id,
     messages,
-    selectedChatModel,
     assistantId,
   }: { 
     id: string; 
     messages: Array<Message>; 
-    selectedChatModel: string;
     assistantId: string;
   } = await request.json();
-
   const session = await auth();
 
   if (!session || !session.user || !session.user.id) {
@@ -47,14 +45,13 @@ export async function POST(request: Request) {
   if (!userMessage) {
     return new Response('No user message found', { status: 400 });
   }
-
+  
   const chat = await getChatById({ id });
 
   if (!chat) {
     // 将当前选择的模型ID传递给生成标题函数
     const title = await generateTitleFromUserMessage({ 
       message: userMessage,
-      selectedModelId: selectedChatModel  // 传入当前选择的模型ID
     });
     await saveChat({ id, userId: session.user.id, title, assistantId });
   }
@@ -63,6 +60,16 @@ export async function POST(request: Request) {
     messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
   });
 
+  // 获取助手信息，用于提供系统提示词
+  let assistant = undefined;
+  if (assistantId) {
+    try {
+      assistant = await getAssistantById({ id: assistantId });
+    } catch (error) {
+      console.error('Failed to fetch assistant:', error);
+    }
+  }
+
   return createDataStreamResponse({
     execute: async (dataStream) => {
       // 使用模型选择器获取当前用户选择的模型
@@ -70,7 +77,10 @@ export async function POST(request: Request) {
 
       const result = streamText({
         model,
-        system: systemPrompt({ selectedChatModel }),
+        system: systemPrompt({ 
+          // selectedChatModel,
+          assistant // 传递助手信息给 systemPrompt 函数
+        }),
         messages,
         maxSteps: 5,
         // experimental_activeTools:
